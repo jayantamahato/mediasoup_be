@@ -1,6 +1,7 @@
 import LiveModel from "../model/live.js";
 import AppError from "../utils/error.js";
 import httpCode from "../utils/httpStatus.js";
+import { createRouter, createWorker } from "./mediaSoup.js";
 
 class LiveService {
   async getAllLive() {
@@ -11,9 +12,9 @@ class LiveService {
       throw error;
     }
   }
-  async getAllLiveByAstrologer(astrologerId) {
+  async getLiveByRoomID(id) {
     try {
-      const result = await LiveModel.find({ astrologerId });
+      const result = await LiveModel.find({ astrologerId: id });
 
       return result;
     } catch (error) {
@@ -28,21 +29,33 @@ class LiveService {
       throw error;
     }
   }
+  async getActiveLiveById(roomId) {
+    try {
+      const result = await LiveModel.findOne({ roomId, status: "active" });
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
   async createLive(astrologerId) {
     try {
-      if (!astrologerId) {
+      if (!astrologerId || astrologerId === "") {
         throw new AppError("astrologerId is required", httpCode.BAD_REQUEST);
+      }
+
+      const live = await LiveModel.findOne({ astrologerId, status: "active" });
+      if (live) {
+        throw new AppError(live.roomId, httpCode.BAD_REQUEST);
       }
       const liveData = {
         astrologerId,
         status: "active",
-        roomId: astrologerId,
+        roomId: Date.now().toString(),
       };
       const result = await LiveModel.create(liveData);
       //change the status of astrologer
       //send notification to all followed user
-
-      return result;
+      return result.roomId;
     } catch (error) {
       throw error;
     }
@@ -55,7 +68,7 @@ class LiveService {
       const result = await LiveModel.findByIdAndUpdate(liveId, {
         status: "inactive",
       });
-      //   change the status of astrologer
+
       return result;
     } catch (error) {
       throw error;

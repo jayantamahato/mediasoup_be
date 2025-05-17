@@ -3,13 +3,13 @@ import {
   createLive,
   endLive,
   getAllLive,
-  getAllLiveByAstrologer,
   getAllActiveLive,
+  getLiveByAstrologer,
 } from "../controller/live.js";
 const router = Router();
 router.post("/", createLive);
 router.get("/", getAllLive);
 router.get("/active", getAllActiveLive);
-router.get("/:id", getAllLiveByAstrologer);
+router.get("/:id", getLiveByAstrologer);
 router.post("/end", endLive);
 export { router as liveRouter };

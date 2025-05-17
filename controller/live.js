@@ -27,9 +27,9 @@ export const getAllActiveLive = async (req, res, next) => {
   }
 };
 
-export const getAllLiveByAstrologer = async (req, res, next) => {
+export const getLiveByAstrologer = async (req, res, next) => {
   try {
-    const result = await liveService.getAllLiveByAstrologer(req.params.id);
+    const result = await liveService.getLiveByRoomID(req.params.id);
     res.send(result);
   } catch (error) {
     next(error);

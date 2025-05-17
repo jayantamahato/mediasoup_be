@@ -13,6 +13,7 @@ const liveSchema = new mongoose.Schema(
     roomId: {
       type: String,
       required: true,
+      unique: true,
     },
     callingRoom: {
       type: mongoose.Schema.Types.ObjectId,

@@ -1,8 +1,12 @@
 import * as mediasoup from "mediasoup";
 import mediaSoupConfig from "../mediaSoup.config.js";
+let worker;
 const createWorker = async () => {
   try {
-    const worker = await mediasoup.createWorker(mediaSoupConfig.worker);
+    if (worker) {
+      return worker;
+    }
+    worker = await mediasoup.createWorker(mediaSoupConfig.worker);
     console.warn("\n::::Worker created::::\n");
     return worker;
   } catch (error) {
@@ -50,6 +54,7 @@ const createProducer = async (transport, data) => {
       appData: data.appData,
     });
     console.warn("\n::::Producer created::::\n");
+    console.log(`Producer kind: ${producer.kind}, id: ${producer.id}`);
     return produce;
   } catch (error) {
     console.log("ERROR IN CREATING PRODUCER", error);
